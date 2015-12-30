@@ -1,0 +1,32 @@
+<html>
+<body>
+  <p>
+    Pick a card (e.g. 6H for the 6 of Hearts)
+    <br><br>
+    <input id="card"></input>
+    <button id="button">Display!</button>
+  </p>
+  <p id="errorMessage" style="visibility:hidden; color:red">
+    Invalid card, pick a new card
+  </p>
+  <img id="image">
+
+  <script>
+  document.getElementById('button').onclick = showCard;
+  var matcher = /^([123456789ajqkAJQK]|10)[sdchSDCH]$/;
+  //regular expression
+  var errorMessage = document.getElementById('errorMessage')
+
+  function showCard() {
+    var card = document.getElementById('card').value;
+    if (!(matcher.test(card))) {
+      errorMessage.style.visibility = 'visible';
+      return;
+    }
+    errorMessage.style.visibility = 'hidden';
+    var loc = "cards/"+card+".svg";
+    document.getElementById('image').src = loc;
+  }
+  </script>
+</body>
+</html>
