@@ -7,13 +7,13 @@
     <button id="button">Display!</button>
   </p>
   <p id="errorMessage" style="visibility:hidden; color:red">
-    Invalid card, pick a new card
+    Pick a real card
   </p>
   <img id="image">
 
   <script>
   document.getElementById('button').onclick = showCard;
-  var matcher = /^([123456789ajqkAJQK]|10)[sdchSDCH]$/;
+  var matcher = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/;
   //regular expression
   var errorMessage = document.getElementById('errorMessage')
 
@@ -21,10 +21,11 @@
     var card = document.getElementById('card').value;
     if (!(matcher.test(card))) {
       errorMessage.style.visibility = 'visible';
+      document.getElementById('image').src = '';
       return;
     }
     errorMessage.style.visibility = 'hidden';
-    var loc = "cards/"+card+".svg";
+    var loc = 'cards/'+card.toUpperCase()+'.svg';
     document.getElementById('image').src = loc;
   }
   </script>
