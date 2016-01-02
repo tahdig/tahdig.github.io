@@ -22,86 +22,92 @@ img {width: 50px; height: 73px; margin: 5px}
 <p id="errorMessage" style="visibility:hidden; color:red">
   Pick a real card
 </p>
-My card_____Random Card
-<br>
-<img id="myCard">
-<img id="random1">
-<img id="random2">
-<br>
+<table>
+  <tr>
+    <td>My card:</td>
+    <td>Random 1:</td>
+    <td>Random 2:</td>
+  </tr>
+  <tr>
+    <td><img id="myCard"></td>
+    <td><img id="random1"></td>
+    <td><img id="random2"></td>
+  </table>
+  <br>
 
-<script>
-document.getElementById('button').onclick = showCard;
-//regular expression:
-var matcher = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/;
-var errorMessage = document.getElementById('errorMessage');
-var myCard = document.getElementById('myCard');
+  <script>
+  document.getElementById('button').onclick = showCard;
+  //regular expression:
+  var matcher = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/;
+  var errorMessage = document.getElementById('errorMessage');
+  var myCard = document.getElementById('myCard');
 
-function showCard() {
-  var card = document.getElementById('card').value;
-  if (!(matcher.test(card))) {
-    errorMessage.style.visibility = 'visible';
-    myCard.style.visibility = 'hidden';
-    myCard.src = '';
-    return;
-  }
-  errorMessage.style.visibility = 'hidden';
-  myCard.style.visibility = 'visible';
-  var loc = 'cards/'+card.toUpperCase()+'.svg';
-  myCard.src = loc;
-}
-
-function fullDeck() {
-  for (var j=0; j<4; j++) {
-    var suit = ['C', 'D', 'H', 'S'][j];
-    for (var i=2; i<11; i++){
-      var card1 = i+suit;
-      imageCreate(card1);
+  function showCard() {
+    var card = document.getElementById('card').value;
+    if (!(matcher.test(card))) {
+      errorMessage.style.visibility = 'visible';
+      myCard.style.visibility = 'hidden';
+      myCard.src = '';
+      return;
     }
-    for (var k=0; k<4; k++) {
-      var faceCards = ['J', 'Q', 'K', 'A'][k];
-      var card2 = faceCards+suit;
-      imageCreate(card2);
-    }
+    errorMessage.style.visibility = 'hidden';
+    myCard.style.visibility = 'visible';
+    var loc = 'cards/'+card.toUpperCase()+'.svg';
+    myCard.src = loc;
   }
-  document.getElementById('fullDeck').disabled = true;
-}
 
-function imageCreate(card) {
-  var image = document.createElement('img');
-  image.src = 'cards/'+card+'.svg';
-  document.body.appendChild(image);
-}
+  function fullDeck() {
+    for (var j=0; j<4; j++) {
+      var suit = ['C', 'D', 'H', 'S'][j];
+      for (var i=2; i<11; i++){
+        var card1 = i+suit;
+        imageCreate(card1);
+      }
+      for (var k=0; k<4; k++) {
+        var faceCards = ['J', 'Q', 'K', 'A'][k];
+        var card2 = faceCards+suit;
+        imageCreate(card2);
+      }
+    }
+    document.getElementById('fullDeck').disabled = true;
+  }
 
-document.getElementById('fullDeck').onclick = fullDeck;
+  function imageCreate(card) {
+    var image = document.createElement('img');
+    image.src = 'cards/'+card+'.svg';
+    document.body.appendChild(image);
+  }
 
-function randomCard1() {
-  var randomSuit = Math.floor(4 * Math.random());
-  var suit = ['C','D','H','S'][randomSuit];
-  var randomNumber = Math.floor(13 * Math.random());
-  var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
-  var card = number + suit;
-  var fileName = 'cards/'+card+'.svg';
-  console.log(card);
-  document.getElementById('random1').src = fileName;
-}
-document.getElementById('randomButton').onclick = randomCard1;
+  document.getElementById('fullDeck').onclick = fullDeck;
 
-function randomCard2() {
-  var randomSuit = Math.floor(4 * Math.random());
-  var suit = ['C','D','H','S'][randomSuit];
-  var randomNumber = Math.floor(13 * Math.random());
-  var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
-  var card = number + suit;
-  var fileName = 'cards/'+card+'.svg';
-  console.log(card);
-  document.getElementById('random2').src = fileName;
-}
-document.getElementById('randomButton').onclick = randomCard3;
+  function randomCard1() {
+    var randomSuit = Math.floor(4 * Math.random());
+    var suit = ['C','D','H','S'][randomSuit];
+    var randomNumber = Math.floor(13 * Math.random());
+    var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
+    var card = number + suit;
+    var fileName = 'cards/'+card+'.svg';
+    console.log(card);
+    document.getElementById('random1').src = fileName;
+  }
+  document.getElementById('randomButton').onclick = randomCard1;
 
-function randomCard3() {
-  randomCard1();
-  randomCard2();
-}
-</script>
+  function randomCard2() {
+    var randomSuit = Math.floor(4 * Math.random());
+    var suit = ['C','D','H','S'][randomSuit];
+    var randomNumber = Math.floor(13 * Math.random());
+    var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
+    var card = number + suit;
+    var fileName = 'cards/'+card+'.svg';
+    console.log(card);
+    document.getElementById('random2').src = fileName;
+  }
+  document.getElementById('randomButton').onclick = randomCard3;
+
+  function randomCard3() {
+    randomCard1();
+    randomCard2();
+  }
+  </script>
 </body>
 </html>
