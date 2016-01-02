@@ -1,62 +1,71 @@
 <html>
 <body>
-  <p>
-    Pick a card (e.g. 6H for the 6 of Hearts)
-    <br><br>
-    <input id="card"></input>
-    <button id="button">Display!</button>
-    <button id="fullDeck">Full Deck!</button>
-  </p>
-  <p id="errorMessage" style="visibility:hidden; color:red">
-    Pick a real card
-  </p>
-  <img id="image">
-  <br>
+<style>
+p {color: white}
+body {background-color: #047911}
+img {width: 50px; margin: 5px}
+</style>
 
-  <script>
-  document.getElementById('button').onclick = showCard;
-  var matcher = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/;
-  //regular expression
-  var errorMessage = document.getElementById('errorMessage')
+<p>
+  Pick a card (e.g. 6H for the 6 of Hearts)
+  <br><br>
+  <input id="card"></input>
+  <button id="button">Display!</button>
+  <button id="fullDeck">Full Deck!</button>
+</p>
+<p id="errorMessage" style="visibility:hidden; color:red">
+  Pick a real card
+</p>
+<img id="image">
+<br>
 
-  function showCard() {
-    var card = document.getElementById('card').value;
-    if (!(matcher.test(card))) {
-      errorMessage.style.visibility = 'visible';
-      document.getElementById('image').src = '';
-      return;
+<script>
+document.getElementById('button').onclick = showCard;
+var matcher = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/;
+//regular expression
+var errorMessage = document.getElementById('errorMessage');
+var image = document.getElementById('image');
+
+function showCard() {
+  var card = document.getElementById('card').value;
+  if (!(matcher.test(card))) {
+    errorMessage.style.visibility = 'visible';
+    image.style.visibility = 'hidden';
+    image.src = '';
+    return;
+  }
+  errorMessage.style.visibility = 'hidden';
+  image.style.visibility = 'visible';
+  var loc = 'cards/'+card.toUpperCase()+'.svg';
+  image.src = loc;
+}
+
+function fullDeck() {
+  for (var j=0; j<4; j++) {
+    var suit = ['C', 'D', 'H', 'S'][j];
+    for (var i=2; i<11; i++){
+      var loc1 = 'cards/'+(i+suit+'.svg');
+      imageCreate(loc1);
     }
-    errorMessage.style.visibility = 'hidden';
-    var loc = 'cards/'+card.toUpperCase()+'.svg';
-    document.getElementById('image').src = loc;
-  }
-
-  function fullDeck() {
-    for (var j=0; j<4; j++) {
-      var suit = ['C', 'D', 'H', 'S'][j];
-      for (var i=2; i<11; i++){
-        var loc1 = 'cards/'+(i+suit+'.svg');
-        imageCreate(loc1);
-      }
-      for (var k=0; k<4; k++) {
-        var faceCards = ['J', 'Q', 'K', 'A'][k];
-        var loc2 = 'cards/'+(faceCards+suit+'.svg');
-        imageCreate(loc2);
-      }
+    for (var k=0; k<4; k++) {
+      var faceCards = ['J', 'Q', 'K', 'A'][k];
+      var loc2 = 'cards/'+(faceCards+suit+'.svg');
+      imageCreate(loc2);
     }
-    document.getElementById('fullDeck').disabled = true;
   }
+  document.getElementById('fullDeck').disabled = true;
+}
 
-  function imageCreate(loc) {
-    var image = document.createElement('img');
-    image.src = loc;
-    document.body.appendChild(image);
-    //document.body.appendChild(document.createElement('br'));
-  }
+function imageCreate(loc) {
+  var image = document.createElement('img');
+  image.src = loc;
+  document.body.appendChild(image);
+  //document.body.appendChild(document.createElement('br'));
+}
 
-  document.getElementById('fullDeck').onclick = fullDeck;
+document.getElementById('fullDeck').onclick = fullDeck;
 
 
-  </script>
+</script>
 </body>
 </html>
