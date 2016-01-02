@@ -1,9 +1,11 @@
 <html>
 <body>
+
 <style>
 p {color: white}
 body {background-color: #047911}
 img {width: 50px; height: 73px; margin: 5px}
+#myCard {border: 2px dotted black}
 </style>
 
 <p>
@@ -16,27 +18,27 @@ img {width: 50px; height: 73px; margin: 5px}
 <p id="errorMessage" style="visibility:hidden; color:red">
   Pick a real card
 </p>
-<img id="image" style="visibility:hidden">
+<img id="myCard">
 
 <script>
 document.getElementById('button').onclick = showCard;
+//regular expression:
 var matcher = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/;
-//regular expression
 var errorMessage = document.getElementById('errorMessage');
-var image = document.getElementById('image');
+var myCard = document.getElementById('myCard');
 
 function showCard() {
   var card = document.getElementById('card').value;
   if (!(matcher.test(card))) {
     errorMessage.style.visibility = 'visible';
-    image.style.visibility = 'hidden';
-    image.src = '';
+    myCard.style.visibility = 'hidden';
+    myCard.src = '';
     return;
   }
   errorMessage.style.visibility = 'hidden';
-  image.style.visibility = 'visible';
+  myCard.style.visibility = 'visible';
   var loc = 'cards/'+card.toUpperCase()+'.svg';
-  image.src = loc;
+  myCard.src = loc;
 }
 
 function fullDeck() {
@@ -59,11 +61,9 @@ function imageCreate(loc) {
   var image = document.createElement('img');
   image.src = loc;
   document.body.appendChild(image);
-  //document.body.appendChild(document.createElement('br'));
 }
 
 document.getElementById('fullDeck').onclick = fullDeck;
-
 
 </script>
 </body>
