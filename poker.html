@@ -7,15 +7,17 @@ body {background-color: #047911}
 img {width: 50px; height: 73px; margin: 5px}
 #myCard {border: solid black; width: 75px; height: 109.5px}
 #random1 {border: solid black; width: 75px; height: 109.5px}
+#random2 {border: solid black; width: 75px; height: 109.5px}
+
 </style>
 
 <p>
-  Pick a card (e.g. 6H for the 6 of Hearts) the full deck, or a random card!
+  Pick a card (e.g. 6H for the 6 of Hearts), the full deck, or random cards!
   <br><br>
   <input id="card"></input>
   <button id="button">Display!</button>
   <button id="fullDeck">Full Deck!</button>
-  <button id="randomButton">Random Card!</button>
+  <button id="randomButton">2 Random Cards!</button>
 </p>
 <p id="errorMessage" style="visibility:hidden; color:red">
   Pick a real card
@@ -24,7 +26,7 @@ My card_____Random Card
 <br>
 <img id="myCard">
 <img id="random1">
-<!--<img id="random2">-->
+<img id="random2">
 <br>
 
 <script>
@@ -72,21 +74,29 @@ function imageCreate(card) {
 
 document.getElementById('fullDeck').onclick = fullDeck;
 
-function randomCard() {
-  var i = Math.floor(4 * Math.random());
-  var suit = ['C','D','H','S'][i];
-  var j = Math.floor(13 * Math.random());
-  var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][j];
+function randomCard1() {
+  var randomSuit = Math.floor(4 * Math.random());
+  var suit = ['C','D','H','S'][randomSuit];
+  var randomNumber = Math.floor(13 * Math.random());
+  var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
   var card = number + suit;
   var fileName = 'cards/'+card+'.svg';
   console.log(card);
   document.getElementById('random1').src = fileName;
 }
-document.getElementById('randomButton').onclick = randomCard;
+document.getElementById('randomButton').onclick = randomCard1,randomCard2;
 
-//function imageShow(card){
-//  document.getElementById('random2').src = fileName;
-//}
+function randomCard2() {
+  var randomSuit = Math.floor(4 * Math.random());
+  var suit = ['C','D','H','S'][randomSuit];
+  var randomNumber = Math.floor(13 * Math.random());
+  var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
+  var card = number + suit;
+  var fileName = 'cards/'+card+'.svg';
+  console.log(card);
+  document.getElementById('random2').src = fileName;
+}
+
 
 </script>
 </body>
