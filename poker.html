@@ -5,20 +5,26 @@
 p {color: white}
 body {background-color: #047911}
 img {width: 50px; height: 73px; margin: 5px}
-#myCard {border: 2px dotted black}
+#myCard {border: black}
 </style>
 
 <p>
-  Pick a card (e.g. 6H for the 6 of Hearts) or click on Full Deck!
+  Pick a card (e.g. 6H for the 6 of Hearts) the full deck, or a random card!
   <br><br>
   <input id="card"></input>
   <button id="button">Display!</button>
   <button id="fullDeck">Full Deck!</button>
+  <button id="randomButton">Random Card!</button>
 </p>
 <p id="errorMessage" style="visibility:hidden; color:red">
   Pick a real card
 </p>
+My card|Random Card|
+<br>
 <img id="myCard">
+<img id="random1">
+<img id="random2">
+<br>
 
 <script>
 document.getElementById('button').onclick = showCard;
@@ -45,25 +51,41 @@ function fullDeck() {
   for (var j=0; j<4; j++) {
     var suit = ['C', 'D', 'H', 'S'][j];
     for (var i=2; i<11; i++){
-      var loc1 = 'cards/'+(i+suit+'.svg');
-      imageCreate(loc1);
+      var card1 = i+suit;
+      imageCreate(card1);
     }
     for (var k=0; k<4; k++) {
       var faceCards = ['J', 'Q', 'K', 'A'][k];
-      var loc2 = 'cards/'+(faceCards+suit+'.svg');
-      imageCreate(loc2);
+      var card2 = faceCards+suit;
+      imageCreate(card2);
     }
   }
   document.getElementById('fullDeck').disabled = true;
 }
 
-function imageCreate(loc) {
+function imageCreate(card) {
   var image = document.createElement('img');
-  image.src = loc;
+  image.src = 'cards/'+card+'.svg';
   document.body.appendChild(image);
 }
 
 document.getElementById('fullDeck').onclick = fullDeck;
+
+function randomCard() {
+  var i = Math.floor(4 * Math.random());
+  var suit = ['C','D','H','S'][i];
+  var j = Math.floor(13 * Math.random());
+  var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][j];
+  var card = number + suit;
+  var fileName = 'cards/'+card+'.svg';
+  console.log(card);
+  document.getElementById('random1').src = fileName;
+}
+document.getElementById('randomButton').onclick = randomCard;
+
+//function imageShow(card){
+//  document.getElementById('random2').src = fileName;
+//}
 
 </script>
 </body>
