@@ -84,7 +84,7 @@ function randomCard1() {
   console.log(card);
   document.getElementById('random1').src = fileName;
 }
-document.getElementById('randomButton').onclick = randomCard1,randomCard2;
+document.getElementById('randomButton').onclick = randomCard1;
 
 function randomCard2() {
   var randomSuit = Math.floor(4 * Math.random());
@@ -96,8 +96,12 @@ function randomCard2() {
   console.log(card);
   document.getElementById('random2').src = fileName;
 }
+document.getElementById('randomButton').onclick = randomCard3;
 
-
+function randomCard3() {
+  randomCard1();
+  randomCard2();
+}
 </script>
 </body>
 </html>
