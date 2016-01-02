@@ -5,11 +5,13 @@
     <br><br>
     <input id="card"></input>
     <button id="button">Display!</button>
+    <button id="fullDeck">Full Deck!</button>
   </p>
   <p id="errorMessage" style="visibility:hidden; color:red">
     Pick a real card
   </p>
   <img id="image">
+  <br>
 
   <script>
   document.getElementById('button').onclick = showCard;
@@ -28,6 +30,33 @@
     var loc = 'cards/'+card.toUpperCase()+'.svg';
     document.getElementById('image').src = loc;
   }
+
+  function fullDeck() {
+    for (var j=0; j<4; j++) {
+      var suit = ['C', 'D', 'H', 'S'][j];
+      for (var i=2; i<11; i++){
+        var loc1 = 'cards/'+(i+suit+'.svg');
+        imageCreate(loc1);
+      }
+      for (var k=0; k<4; k++) {
+        var faceCards = ['J', 'Q', 'K', 'A'][k];
+        var loc2 = 'cards/'+(faceCards+suit+'.svg');
+        imageCreate(loc2);
+      }
+    }
+    document.getElementById('fullDeck').disabled = true;
+  }
+
+  function imageCreate(loc) {
+    var image = document.createElement('img');
+    image.src = loc;
+    document.body.appendChild(image);
+    //document.body.appendChild(document.createElement('br'));
+  }
+
+  document.getElementById('fullDeck').onclick = fullDeck;
+
+
   </script>
 </body>
 </html>
