@@ -26,11 +26,13 @@ img {width: 50px; height: 73px; margin: 5px}
 <table id="topTable">
   <tr>
     <td>My card:</td>
+    <td></td>
     <td>Random 1:</td>
     <td>Random 2:</td>
   </tr>
   <tr>
     <td><img id="myCard"></td>
+    <td>'     '</td>
     <td><img id="random1"></td>
     <td><img id="random2"></td>
   </table>
@@ -81,34 +83,30 @@ img {width: 50px; height: 73px; margin: 5px}
 
   document.getElementById('fullDeck').onclick = fullDeck;
 
-  function randomCard1() {
+  function randomizer(fileName) {
     var randomSuit = Math.floor(4 * Math.random());
     var suit = ['C','D','H','S'][randomSuit];
     var randomNumber = Math.floor(13 * Math.random());
     var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
     var card = number + suit;
     var fileName = 'cards/'+card+'.svg';
-    console.log(card);
-    document.getElementById('random1').src = fileName;
+    return fileName
   }
-  document.getElementById('randomButton').onclick = randomCard1;
+  //console.log(randomizer())
+  document.getElementById('randomButton').onclick = randomCard;
 
-  function randomCard2() {
-    var randomSuit = Math.floor(4 * Math.random());
-    var suit = ['C','D','H','S'][randomSuit];
-    var randomNumber = Math.floor(13 * Math.random());
-    var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
-    var card = number + suit;
-    var fileName = 'cards/'+card+'.svg';
-    console.log(card);
-    document.getElementById('random2').src = fileName;
+  function randomCard() {
+    var r1 = randomizer(r1);
+    console.log(r1);
+    var r2 = randomizer(r2);
+    console.log(r2);
+    if (r1 != r2) {
+      document.getElementById('random1').src = r1;
+      document.getElementById('random2').src = r2;
+    } else {randomCard()
+    }
   }
-  document.getElementById('randomButton').onclick = randomCard3;
 
-  function randomCard3() {
-    randomCard1();
-    randomCard2();
-  }
   </script>
 </body>
 </html>
