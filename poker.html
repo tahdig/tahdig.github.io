@@ -112,25 +112,78 @@ img {width: 50px; height: 73px; margin: 5px}
     var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
     var card = number + suit;
     var fileName = 'cards/'+card+'.svg';
-    return fileName
+    return fileName;
   }
   //console.log(randomizer())
   document.getElementById('randomButton').onclick = dealCards;
 
+  var r1;
+  var r2;
+  var f1;
+  var f2;
+  var f3;
+  var turn;
+  var river;
+
   function dealCards() {
-    var r1 = randomizer(r1);
-    var r2 = randomizer(r2);
-    if (r1 != r2) {
+    r1 = randomizer(r1);
+    r2 = randomizer(r2);
+    if (r1 == r2) {
+      dealCards();
+    } else {
       document.getElementById('random1').src = r1;
       document.getElementById('random2').src = r2;
-    } else {dealCards()
     }
     document.getElementById('randomButton').textContent = "Flop";
+    document.getElementById('randomButton').onclick = dealFlop;
   }
 
-  document.getElementById('randomButton').onclick = test;
-  function test(){
-    console.log("1");
+  function dealFlop(){
+    f1 = randomizer(f1);
+    f2 = randomizer(f2);
+    f3 = randomizer(f3);
+    if (f1==r1||f1==r2||f2==r1||f2==r2||f2==f1||f3==r1||f3==r2||f3==f1||f3==f2) {
+      dealFlop();
+    } else {
+      document.getElementById('flop1').src = f1;
+      document.getElementById('flop2').src = f2;
+      document.getElementById('flop3').src = f3;
+    }
+    document.getElementById('randomButton').textContent = "Turn";
+    document.getElementById('randomButton').onclick = dealTurn;
+  }
+
+  function dealTurn(){
+    turn = randomizer(turn);
+    if (turn==r1||turn==r2||turn==f1||turn==f2||turn==f3){
+      dealTurn();
+    } else {
+      document.getElementById('turn').src = f1;
+    }
+    document.getElementById('randomButton').textContent = "River";
+    document.getElementById('randomButton').onclick = dealRiver;
+  }
+
+  function dealRiver(){
+    river = randomizer(river);
+    if (river==r1||river==r2||river==f1||river==f2||river==f3||river==turn){
+      dealRiver();
+    } else {
+      document.getElementById('river').src = river;
+    }
+    document.getElementById('randomButton').textContent = "Redeal";
+    document.getElementById('randomButton').onclick = clearContent;
+  }
+
+  function clearContent(){
+    document.getElementById('random1').src='';
+    document.getElementById('random2').src='';
+    document.getElementById('flop1').src='';
+    document.getElementById('flop2').src='';
+    document.getElementById('flop3').src='';
+    document.getElementById('turn').src='';
+    document.getElementById('river').src='';
+    dealCards();
   }
 
 
