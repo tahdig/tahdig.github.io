@@ -5,11 +5,11 @@
 p {color: white}
 body {background-color: #047911}
 img {width: 50px; height: 73px; margin: 5px}
-#myCard {width: 75px; height: 109.5px; margin: 0}
-#random1 {width: 75px; height: 109.5px; margin: 0}
-#random2 {width: 75px; height: 109.5px; margin: 0}
+.card {width: 75px; height: 109.5px; margin: 0}
 #topTable {text-align: center}
-
+.emptyCell {width: 25px}
+.emptyImage {width: 75px}
+.emptyRow {height: 30px}
 </style>
 
 <p>
@@ -18,7 +18,7 @@ img {width: 50px; height: 73px; margin: 5px}
   <input id="card"></input>
   <button id="button">Display!</button>
   <button id="fullDeck">Full Deck!</button>
-  <button id="randomButton">2 Random Cards!</button>
+  <button id="randomButton">Deal!</button>
 </p>
 <p id="errorMessage" style="visibility:hidden; color:red">
   Pick a real card
@@ -26,15 +26,37 @@ img {width: 50px; height: 73px; margin: 5px}
 <table id="topTable">
   <tr>
     <td>My card:</td>
-    <td></td>
+    <td class="emptyCell"></td>
     <td>Random 1:</td>
     <td>Random 2:</td>
   </tr>
   <tr>
-    <td><img id="myCard"></td>
-    <td>'     '</td>
-    <td><img id="random1"></td>
-    <td><img id="random2"></td>
+    <td><img id="myCard" class="card"></td>
+    <td class="emptyCell"></td>
+    <td><img id="random1" class="card"></td>
+    <td><img id="random2" class="card"></td>
+  </tr>
+  <tr>
+    <td class="emptyRow"></td>
+    <td class="emptyRow"></td>
+    <td>Flop:</td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>Turn:</td>
+    <td class="emptyRow"></td>
+    <td>River:</td>
+  </tr>
+  <tr>
+    <td class="emptyImage"></td>
+    <td class="emptyCell">Boardcards:</td>
+    <td><img id="flop1" class="card"></td>
+    <td><img id="flop2" class="card"></td>
+    <td><img id="flop3" class="card"></td>
+    <td class="emptyCell"></td>
+    <td><img id="turn" class="card"></td>
+    <td class="emptyCell"></td>
+    <td><img id="river" class="card"></td>
   </table>
   <br>
 
@@ -93,19 +115,24 @@ img {width: 50px; height: 73px; margin: 5px}
     return fileName
   }
   //console.log(randomizer())
-  document.getElementById('randomButton').onclick = randomCard;
+  document.getElementById('randomButton').onclick = dealCards;
 
-  function randomCard() {
+  function dealCards() {
     var r1 = randomizer(r1);
-    console.log(r1);
     var r2 = randomizer(r2);
-    console.log(r2);
     if (r1 != r2) {
       document.getElementById('random1').src = r1;
       document.getElementById('random2').src = r2;
-    } else {randomCard()
+    } else {dealCards()
     }
+    document.getElementById('randomButton').textContent = "Flop";
   }
+
+  document.getElementById('randomButton').onclick = test;
+  function test(){
+    console.log("1");
+  }
+
 
   </script>
 </body>
