@@ -1,0 +1,95 @@
+<html>
+<body>
+
+<style>
+
+</style>
+
+
+<p>
+  Hi
+</p>
+
+<script>
+
+var suits = 'CDHS';
+var cards = [];
+
+function fullDeck() {
+  for (var j=0; j<4; j++) {
+    var suit = suits[j];
+    for (var i=2; i<11; i++){
+      cards.push(i+suit);
+    }
+    for (var k=0; k<4; k++) {
+      var faceCard = ['J', 'Q', 'K', 'A'][k];
+      cards.push(faceCard+suit);
+    }
+  }
+  return cards;
+}
+fullDeck();
+
+
+function randomizer() {
+  return cards[randomInt(cards.length)];
+}
+
+function randomInt(limit){
+  return Math.floor(limit * Math.random());
+}
+
+
+var board = [];
+
+function dealCards(number) {
+  if (number > cards.length){
+    throw 'error: not enough cards.';
+  }
+  for (var i = 0; i < number; i++) {
+    board.push('');
+  }
+}
+
+dealCards(52);
+
+function createBoard() {
+  for (var i = 0; i < board.length; i++) {
+    board[i]=randomizer();
+    //console.log('pick', board[i]);
+    for (var j = i-1; j >= 0; j--){
+      var test = board[j];
+      //console.log('test', 'i='+i, 'j='+j, test, board);
+      if (board[i] == test){
+        board[i]=randomizer();
+        j = i; // restart inner loop (j = i-1+1)
+        //console.log('duplicate!', 'new='+board[i], board);
+      } else {
+        //console.log('OK!');
+      }
+    }
+  }
+  console.log('final', board);
+}
+createBoard();
+
+function testCreateBoard(){
+  console.log('begin!');
+  var t1 = Date.now();
+  var c = 0;
+  var numTests = 100000;
+  for (var i = 0; i < numTests; i++) {
+    createBoard();
+    if (board[0]==board[2] || board[0]==board[1] || board[1]==board[2]) {
+      c++;
+    }
+  }
+  console.log('# of errors:', c, 'Relative error:', 100*c/numTests+'%');
+  console.log('done!');
+  var t2 = Date.now();
+  console.log((t2-t1)/1000);
+}
+
+</script>
+</body>
+</html>
