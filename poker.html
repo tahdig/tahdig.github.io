@@ -78,33 +78,42 @@ img {width: 50px; height: 73px; margin: 5px}
     }
     errorMessage.style.visibility = 'hidden';
     myCard.style.visibility = 'visible';
-    var loc = 'cards/'+card.toUpperCase()+'.svg';
+    var loc = 'cards/png/'+card.toUpperCase()+'.png';
     myCard.src = loc;
   }
 
-  function fullDeck() {
+  const SUITS = 'CDHS';
+  const FACES = 'JQKA';
+
+  function makeDeck() {
+    var result = [];
     for (var j=0; j<4; j++) {
-      var suit = ['C', 'D', 'H', 'S'][j];
+      var suit = SUITS[j];
       for (var i=2; i<11; i++){
-        var card1 = i+suit;
-        imageCreate(card1);
+        result.push(i+suit);
       }
       for (var k=0; k<4; k++) {
-        var faceCards = ['J', 'Q', 'K', 'A'][k];
-        var card2 = faceCards+suit;
-        imageCreate(card2);
+        result.push(FACES[k] + suit);
       }
+    }
+    return result;
+  }
+  var cards = makeDeck();
+
+  function imageCreate(card) {
+    var image = document.createElement('img');
+    image.src = 'cards/png/'+card+'.png';
+    document.body.appendChild(image);
+  }
+
+  function clickFullDeck() {
+    for (var i = 0; i < cards.length; i++){
+      imageCreate(cards[i]);
     }
     document.getElementById('fullDeck').disabled = true;
   }
 
-  function imageCreate(card) {
-    var image = document.createElement('img');
-    image.src = 'cards/'+card+'.svg';
-    document.body.appendChild(image);
-  }
-
-  document.getElementById('fullDeck').onclick = fullDeck;
+  document.getElementById('fullDeck').onclick = clickFullDeck;
 
   function randomizer(fileName) {
     var randomSuit = Math.floor(4 * Math.random());
@@ -112,7 +121,7 @@ img {width: 50px; height: 73px; margin: 5px}
     var randomNumber = Math.floor(13 * Math.random());
     var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
     var card = number + suit;
-    var fileName = 'cards/'+card+'.svg';
+    var fileName = 'cards/png/'+card+'.png';
     return fileName;
   }
   //console.log(randomizer())
