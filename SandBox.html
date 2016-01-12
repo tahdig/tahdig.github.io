@@ -12,23 +12,24 @@
 
 <script>
 
-var suits = 'CDHS';
-var cards = [];
+const SUITS = 'CDHS';
+const FACES = 'JQKA';
 
 function fullDeck() {
+  var result = [];
   for (var j=0; j<4; j++) {
-    var suit = suits[j];
+    var suit = SUITS[j];
     for (var i=2; i<11; i++){
-      cards.push(i+suit);
+      result.push(i+suit);
     }
     for (var k=0; k<4; k++) {
-      var faceCard = ['J', 'Q', 'K', 'A'][k];
-      cards.push(faceCard+suit);
+      result.push(FACES[k] + suit);
     }
   }
-  return cards;
+  console.log(result);
+  return result;
 }
-fullDeck();
+var cards = fullDeck();
 
 
 function randomizer() {
