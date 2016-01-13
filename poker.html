@@ -34,8 +34,8 @@ img {width: 50px; height: 73px; margin: 5px}
   <tr>
     <td><img id="myCard" class="card"></td>
     <td class="emptyCell"></td>
-    <td><img id="random1" class="card"></td>
-    <td><img id="random2" class="card"></td>
+    <td><img id="h1" class="card"></td>
+    <td><img id="h2" class="card"></td>
   </tr>
   <tr>
     <td class="emptyRow"></td>
@@ -78,7 +78,7 @@ img {width: 50px; height: 73px; margin: 5px}
     }
     errorMessage.style.visibility = 'hidden';
     myCard.style.visibility = 'visible';
-    var loc = 'cards/png/'+card.toUpperCase()+'.png';
+    var loc = cardFileName(card.toUpperCase());
     myCard.src = loc;
   }
 
@@ -102,7 +102,7 @@ img {width: 50px; height: 73px; margin: 5px}
 
   function imageCreate(card) {
     var image = document.createElement('img');
-    image.src = 'cards/png/'+card+'.png';
+    image.src = cardFileName(card);
     document.body.appendChild(image);
   }
 
@@ -115,81 +115,103 @@ img {width: 50px; height: 73px; margin: 5px}
 
   document.getElementById('fullDeck').onclick = clickFullDeck;
 
-  function randomizer(fileName) {
-    var randomSuit = Math.floor(4 * Math.random());
-    var suit = ['C','D','H','S'][randomSuit];
-    var randomNumber = Math.floor(13 * Math.random());
-    var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
-    var card = number + suit;
-    var fileName = 'cards/png/'+card+'.png';
-    return fileName;
-  }
+  // function randomizer() {
+  //   var randomSuit = Math.floor(4 * Math.random());
+  //   var suit = ['C','D','H','S'][randomSuit];
+  //   var randomNumber = Math.floor(13 * Math.random());
+  //   var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
+  //   var card = number + suit;
+  //   var fileName = 'cards/png/'+card+'.png';
+  //   return fileName;
+  // }
   //console.log(randomizer())
-  document.getElementById('randomButton').onclick = dealCards;
 
-  var r1, r2;
+  function cardFileName(cardName) {
+    return 'cards/png/'+cardName+'.png';
+  }
+
+  // returns a random item in array cards
+  function randomizer() {
+    return cards[randomInt(cards.length)];
+  }
+
+  // returns a random num [0 , limit)
+  function randomInt(limit){
+    return Math.floor(limit * Math.random());
+  }
+
+  document.getElementById('randomButton').onclick = dealHand;
+
+
+  var h1 = {id: 'h1', val: ''};
+  var h2 = {id: 'h2', val: ''};
   var f1, f2, f3;
   var turn, river;
 
-  function dealCards() {
-    r1 = randomizer(r1);
-    r2 = randomizer(r2);
-    if (r1 == r2) {
-      dealCards();
+  function setSource(card) {
+    return document.getElementById(card.id).src = cardFileName(card.val);
+  }
+
+  function dealHand() {
+    h1.val = randomizer();
+    h2.val = randomizer();
+    if (h1.val == h2.val) {
+      dealHand();
     } else {
-      document.getElementById('random1').src = r1;
-      document.getElementById('random2').src = r2;
+      setSource(h1);
+      setSource(h2);
     }
     document.getElementById('randomButton').textContent = "Flop";
     document.getElementById('randomButton').onclick = dealFlop;
   }
 
-  function dealFlop(){
+  function dealFlop() {
     f1 = randomizer(f1);
     f2 = randomizer(f2);
     f3 = randomizer(f3);
-    if (f1==r1||f1==r2||f2==r1||f2==r2||f2==f1||f3==r1||f3==r2||f3==f1||f3==f2) {
+    if (f1==h1||f1==h2||f2==h1||f2==h2||f2==f1||f3==h1||f3==h2||f3==f1||f3==f2) {
       dealFlop();
     } else {
-      document.getElementById('flop1').src = f1;
-      document.getElementById('flop2').src = f2;
-      document.getElementById('flop3').src = f3;
+      document.getElementById('flop1').src = cardFileName(f1);
+      document.getElementById('flop2').src = cardFileName(f2);
+      document.getElementById('flop3').src = cardFileName(f3);
     }
     document.getElementById('randomButton').textContent = "Turn";
     document.getElementById('randomButton').onclick = dealTurn;
   }
 
-  function dealTurn(){
+  function dealTurn() {
     turn = randomizer(turn);
-    if (turn==r1||turn==r2||turn==f1||turn==f2||turn==f3){
+    if (turn==h1||turn==h2||turn==f1||turn==f2||turn==f3){
       dealTurn();
     } else {
-      document.getElementById('turn').src = turn;
+      document.getElementById('turn').src = cardFileName(turn);
     }
     document.getElementById('randomButton').textContent = "River";
     document.getElementById('randomButton').onclick = dealRiver;
   }
 
-  function dealRiver(){
+  function dealRiver() {
     river = randomizer(river);
-    if (river==r1||river==r2||river==f1||river==f2||river==f3||river==turn){
+    if (river==h1||river==h2||river==f1||river==f2||river==f3||river==turn){
       dealRiver();
     } else {
-      document.getElementById('river').src = river;
+      document.getElementById('river').src = cardFileName(river);
     }
     document.getElementById('randomButton').textContent = "Redeal";
     document.getElementById('randomButton').onclick = clearContent;
   }
 
-  function clearContent(){
-    document.getElementById('random1').src='';
-    document.getElementById('random2').src='';
+  //delete and recreate image
+  function clearContent() {
+    document.getElementById('h1').src='';
+    document.getElementById('h2').src='';
     document.getElementById('flop1').src='';
     document.getElementById('flop2').src='';
     document.getElementById('flop3').src='';
     document.getElementById('turn').src='';
     document.getElementById('river').src='';
-    dealCards();
+    dealHand();
   }
 
 
