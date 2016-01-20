@@ -2,12 +2,11 @@
 <body>
 
 <style>
-p {color: black}
-body {background-color: #047911}
-img {width: 50px; height: 73px; margin: 5px}
+body {background-color: #047911; color: black}
+img {width: 50px; height: 73px; margin: 5px; visibility:hidden}
 .card {width: 75px; height: 110px; margin: 0}
-#topTable {text-align: center}
-#randomButton {text-align: center; width: 100px}
+#board {text-align: center}
+#dealButton {text-align: center; width: 100px}
 .emptyCell {width: 25px}
 .emptyImage {width: 75px}
 .emptyRow {height: 30px}
@@ -16,15 +15,15 @@ img {width: 50px; height: 73px; margin: 5px}
 <p>
   Pick a card (e.g. 6H for the 6 of Hearts), dispaly the full deck, or play Texas hold'em by yourself..for hours.
   <br><br>
-  <input id="card"></input>
-  <button id="button">Display!</button>
-  <button id="fullDeck">Full Deck!</button>
-  <button id="randomButton">Texas hold'em</button>
+  <input id="cardInput"></input>
+  <button id="chooseButton">Display!</button>
+  <button id="fullDeckButton">Full Deck!</button>
+  <button id="dealButton">Texas hold'em</button>
 </p>
 <p id="errorMessage" style="visibility:hidden; color:red">
   Pick a real card
 </p>
-<table id="topTable">
+<table id="board">
   <tr>
     <td>Selected:</td>
     <td class="emptyCell"></td>
@@ -32,7 +31,7 @@ img {width: 50px; height: 73px; margin: 5px}
     <td>Card 2:</td>
   </tr>
   <tr>
-    <td><img id="myCard" class="card"></td>
+    <td><img id="selectedSlot" class="card"></td>
     <td class="emptyCell"></td>
     <td><img id="h1" class="card"></td>
     <td><img id="h2" class="card"></td>
@@ -51,77 +50,86 @@ img {width: 50px; height: 73px; margin: 5px}
   <tr>
     <td class="emptyImage"></td>
     <td class="emptyCell">Boardcards:</td>
-    <td><img id="flop1" class="card"></td>
-    <td><img id="flop2" class="card"></td>
-    <td><img id="flop3" class="card"></td>
+    <td><img id="f1" class="card"></td>
+    <td><img id="f2" class="card"></td>
+    <td><img id="f3" class="card"></td>
     <td class="emptyCell"></td>
-    <td><img id="turn" class="card"></td>
+    <td><img id="t" class="card"></td>
     <td class="emptyCell"></td>
-    <td><img id="river" class="card"></td>
+    <td><img id="r" class="card"></td>
   </table>
   <br>
 
   <script>
-  document.getElementById('button').onclick = showCard;
-  //regular expression:
-  var matcher = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/;
-  var errorMessage = document.getElementById('errorMessage');
-  var myCard = document.getElementById('myCard');
 
-  function showCard() {
-    var card = document.getElementById('card').value;
-    if (!(matcher.test(card))) {
+  var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
+  var h1, h2, f1, f2, f3, t, r; // card slots
+  var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r'];
+  var deck = makeDeck();
+
+  var dealButton = document.getElementById('dealButton');
+  var errorMessage = document.getElementById('errorMessage');
+  document.getElementById('chooseButton').onclick = showChosenCard;
+  document.getElementById('fullDeckButton').onclick = clickFullDeck;
+  dealButton.onclick = dealHand;
+
+  function showChosenCard() {
+    var chosenCard = document.getElementById('cardInput').value;
+    if (!(cardNamePattern.test(chosenCard))) {
       errorMessage.style.visibility = 'visible';
-      myCard.visibility = 'hidden';
-      myCard.src = '';
+      clearCard('selectedSlot');
       return;
     }
     errorMessage.style.visibility = 'hidden';
-    myCard.style.visibility = 'visible';
-    var loc = cardFileName(card.toUpperCase());
-    myCard.src = loc;
+    showCard(chosenCard, 'selectedSlot');
   }
 
-  const SUITS = 'CDHS';
-  const FACES = 'JQKA';
+  // display a given card in a given place
+  function showCard(cardName, slotId) {
+    document.getElementById(slotId).src = cardFileName(cardName);
+    document.getElementById(slotId).style.visibility = 'visible';
+  }
+
+  // clears the card with the given id
+  function clearCard(cardId) {
+    document.getElementById(cardId).style.visibility = 'hidden';
+  }
 
   function makeDeck() {
     var result = [];
     for (var j=0; j<4; j++) {
-      var suit = SUITS[j];
+      var suit = 'CDHS'[j];
       for (var i=2; i<11; i++){
         result.push(i+suit);
       }
       for (var k=0; k<4; k++) {
-        result.push(FACES[k] + suit);
+        result.push('JQKA'[k] + suit);
       }
     }
     return result;
   }
-  var cards = makeDeck();
 
   function imageCreate(card) {
     var image = document.createElement('img');
+    image.style.visibility = 'visible';
     image.src = cardFileName(card);
     document.body.appendChild(image);
   }
 
   function clickFullDeck() {
-    for (var i = 0; i < cards.length; i++){
-      imageCreate(cards[i]);
+    for (var i = 0; i < deck.length; i++){
+      imageCreate(deck[i]);
     }
-    document.getElementById('fullDeck').disabled = true;
+    document.getElementById('fullDeckButton').disabled = true;
   }
 
-  document.getElementById('fullDeck').onclick = clickFullDeck;
-
   function cardFileName(cardName) {
-    return 'cards/small/'+cardName+'.png';
+    return 'cards/small/'+cardName.toUpperCase()+'.png';
   }
 
   // returns a random item in array cards
   function randomizer() {
-    return cards[randomInt(cards.length)];
+    return deck[randomInt(deck.length)];
   }
 
   // returns a random num [0 , limit)
@@ -129,29 +137,16 @@ img {width: 50px; height: 73px; margin: 5px}
     return Math.floor(limit * Math.random());
   }
 
-  document.getElementById('randomButton').onclick = dealHand;
-
-
-  var h1 = {id: 'h1', val: ''};
-  var h2 = {id: 'h2', val: ''};
-  var f1, f2, f3;
-  var turn, river;
-
-  function setSource(card) {
-    return document.getElementById(card.id).src = cardFileName(card.val);
-  }
-
   function dealHand() {
-    h1.val = randomizer();
-    h2.val = randomizer();
-    if (h1.val == h2.val) {
-      dealHand();
-    } else {
-      setSource(h1);
-      setSource(h2);
+    h1 = randomizer();
+    h2 = randomizer();
+    if (h1 == h2) {
+      return dealHand();
     }
-    document.getElementById('randomButton').textContent = "Flop";
-    document.getElementById('randomButton').onclick = dealFlop;
+    showCard(h1, 'h1');
+    showCard(h2, 'h2');
+    dealButton.textContent = "Flop";
+    dealButton.onclick = dealFlop;
   }
 
   function dealFlop() {
@@ -159,50 +154,43 @@ img {width: 50px; height: 73px; margin: 5px}
     f2 = randomizer(f2);
     f3 = randomizer(f3);
     if (f1==h1||f1==h2||f2==h1||f2==h2||f2==f1||f3==h1||f3==h2||f3==f1||f3==f2) {
-      dealFlop();
-    } else {
-      document.getElementById('flop1').src = cardFileName(f1);
-      document.getElementById('flop2').src = cardFileName(f2);
-      document.getElementById('flop3').src = cardFileName(f3);
+      return dealFlop();
     }
-    document.getElementById('randomButton').textContent = "Turn";
-    document.getElementById('randomButton').onclick = dealTurn;
+    showCard(f1, 'f1');
+    showCard(f2, 'f2');
+    showCard(f3, 'f3');
+    dealButton.textContent = "Turn";
+    dealButton.onclick = dealTurn;
   }
 
   function dealTurn() {
-    turn = randomizer(turn);
-    if (turn==h1||turn==h2||turn==f1||turn==f2||turn==f3){
-      dealTurn();
-    } else {
-      document.getElementById('turn').src = cardFileName(turn);
+    t = randomizer(t);
+    if (t==h1||t==h2||t==f1||t==f2||t==f3){
+      return dealTurn();
     }
-    document.getElementById('randomButton').textContent = "River";
-    document.getElementById('randomButton').onclick = dealRiver;
+    showCard(t, 't');
+    dealButton.textContent = "River";
+    dealButton.onclick = dealRiver;
   }
 
   function dealRiver() {
-    river = randomizer(river);
-    if (river==h1||river==h2||river==f1||river==f2||river==f3||river==turn){
-      dealRiver();
-    } else {
-      document.getElementById('river').src = cardFileName(river);
+    r = randomizer(r);
+    if (r==h1||r==h2||r==f1||r==f2||r==f3||r==t){
+      return dealRiver();
     }
-    document.getElementById('randomButton').textContent = "Redeal";
-    document.getElementById('randomButton').onclick = clearContent;
+    showCard(r, 'r');
+    dealButton.textContent = "Clear";
+    dealButton.onclick = clearBoard;
   }
 
-  //delete and recreate image
-  function clearContent() {
-    document.getElementById('h1').src='';
-    document.getElementById('h2').src='';
-    document.getElementById('flop1').src='';
-    document.getElementById('flop2').src='';
-    document.getElementById('flop3').src='';
-    document.getElementById('turn').src='';
-    document.getElementById('river').src='';
-    dealHand();
+  // clears all dealt cards
+  function clearBoard() {
+    for (var i=0; i<cardIds.length; i++){
+      clearCard(cardIds[i]);
+    }
+    dealButton.textContent = "Redeal";
+    dealButton.onclick = dealHand;
   }
-
 
   </script>
 </body>
