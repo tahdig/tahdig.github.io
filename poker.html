@@ -5,7 +5,7 @@
 p {color: black}
 body {background-color: #047911}
 img {width: 50px; height: 73px; margin: 5px}
-.card {width: 75px; height: 109.5px; margin: 0}
+.card {width: 75px; height: 110px; margin: 0}
 #topTable {text-align: center}
 #randomButton {text-align: center; width: 100px}
 .emptyCell {width: 25px}
@@ -115,19 +115,8 @@ img {width: 50px; height: 73px; margin: 5px}
 
   document.getElementById('fullDeck').onclick = clickFullDeck;
 
-  // function randomizer() {
-  //   var randomSuit = Math.floor(4 * Math.random());
-  //   var suit = ['C','D','H','S'][randomSuit];
-  //   var randomNumber = Math.floor(13 * Math.random());
-  //   var number = ['2','3','4','5','6','7','8','9','10','J','Q','K','A'][randomNumber];
-  //   var card = number + suit;
-  //   var fileName = 'cards/png/'+card+'.png';
-  //   return fileName;
-  // }
-  //console.log(randomizer())
-
   function cardFileName(cardName) {
-    return 'cards/png/'+cardName+'.png';
+    return 'cards/small/'+cardName+'.png';
   }
 
   // returns a random item in array cards
