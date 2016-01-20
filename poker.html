@@ -3,17 +3,23 @@
 
 <style>
 body {background-color: #047911; color: black}
-img {width: 50px; height: 73px; margin: 5px; visibility:hidden}
-.card {width: 75px; height: 110px; margin: 0}
 #board {text-align: center}
 #dealButton {text-align: center; width: 100px}
 .emptyCell {width: 25px}
 .emptyImage {width: 75px}
 .emptyRow {height: 30px}
+.slot {
+  background-color: #065827;
+  width: 75px;
+  height: 110px;
+  margin: 0;
+  padding: 0;
+}
+#fullDeckBoard img {width: 50px; margin: 5px}
 </style>
 
 <p>
-  Pick a card (e.g. 6H for the 6 of Hearts), dispaly the full deck, or play Texas hold'em by yourself..for hours.
+  Pick a card (e.g. 6H for the 6 of Hearts), display the full deck, or play Texas hold'em by yourself..for hours.
   <br><br>
   <input id="cardInput"></input>
   <button id="chooseButton">Display!</button>
@@ -31,10 +37,10 @@ img {width: 50px; height: 73px; margin: 5px; visibility:hidden}
     <td>Card 2:</td>
   </tr>
   <tr>
-    <td><img id="selectedSlot" class="card"></td>
+    <td class="slot" id="selectedSlot"></td>
     <td class="emptyCell"></td>
-    <td><img id="h1" class="card"></td>
-    <td><img id="h2" class="card"></td>
+    <td class="slot" id="h1"></td>
+    <td class="slot" id="h2"></td>
   </tr>
   <tr>
     <td class="emptyRow"></td>
@@ -50,16 +56,16 @@ img {width: 50px; height: 73px; margin: 5px; visibility:hidden}
   <tr>
     <td class="emptyImage"></td>
     <td class="emptyCell">Boardcards:</td>
-    <td><img id="f1" class="card"></td>
-    <td><img id="f2" class="card"></td>
-    <td><img id="f3" class="card"></td>
+    <td class="slot" id="f1"></td>
+    <td class="slot" id="f2"></td>
+    <td class="slot" id="f3"></td>
     <td class="emptyCell"></td>
-    <td><img id="t" class="card"></td>
+    <td class="slot" id="t"></td>
     <td class="emptyCell"></td>
-    <td><img id="r" class="card"></td>
+    <td class="slot" id="r"></td>
   </table>
   <br>
-
+  <div id="fullDeckBoard"></div>
   <script>
 
   var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
@@ -84,15 +90,21 @@ img {width: 50px; height: 73px; margin: 5px; visibility:hidden}
     showCard(chosenCard, 'selectedSlot');
   }
 
+  function imageCreate(card, slotId) {
+    var image = document.createElement('img');
+    image.src = cardFileName(card);
+    document.getElementById(slotId).appendChild(image);
+  }
+
   // display a given card in a given place
   function showCard(cardName, slotId) {
-    document.getElementById(slotId).src = cardFileName(cardName);
-    document.getElementById(slotId).style.visibility = 'visible';
+    clearCard(slotId);
+    imageCreate(cardName, slotId);
   }
 
   // clears the card with the given id
-  function clearCard(cardId) {
-    document.getElementById(cardId).style.visibility = 'hidden';
+  function clearCard(slotId) {
+    document.getElementById(slotId).innerHTML = '';
   }
 
   function makeDeck() {
@@ -109,16 +121,9 @@ img {width: 50px; height: 73px; margin: 5px; visibility:hidden}
     return result;
   }
 
-  function imageCreate(card) {
-    var image = document.createElement('img');
-    image.style.visibility = 'visible';
-    image.src = cardFileName(card);
-    document.body.appendChild(image);
-  }
-
   function clickFullDeck() {
     for (var i = 0; i < deck.length; i++){
-      imageCreate(deck[i]);
+      imageCreate(deck[i], 'fullDeckBoard');
     }
     document.getElementById('fullDeckButton').disabled = true;
   }
