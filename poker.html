@@ -4,7 +4,10 @@
 <style>
 body {background-color: #047911; color: black}
 #board {text-align: center}
-#dealButton {text-align: center; width: 100px}
+
+button {padding: 4px}
+#fullDeckButton {width: 110px}
+#dealButton {width: 90px}
 .emptyCell {width: 25px}
 .emptyImage {width: 75px}
 .emptyRow {height: 30px}
@@ -19,11 +22,11 @@ body {background-color: #047911; color: black}
 </style>
 
 <p>
-  Pick a card (e.g. 6H for the 6 of Hearts), display the full deck, or play Texas hold'em by yourself..for hours.
+  Pick a card (e.g. 6H for the 6 of Hearts), show/hide full deck, or play Texas hold'em by yourself..for hours.
   <br><br>
   <input id="cardInput"></input>
   <button id="chooseButton">Display!</button>
-  <button id="fullDeckButton">Full Deck!</button>
+  <button id="fullDeckButton">Show Full Deck!</button>
   <button id="dealButton">Texas hold'em</button>
 </p>
 <p id="errorMessage" style="visibility:hidden; color:red">
@@ -65,7 +68,7 @@ body {background-color: #047911; color: black}
     <td class="slot" id="r"></td>
   </table>
   <br>
-  <div id="fullDeckBoard"></div>
+  <div id="fullDeckBoard" style="visibility:hidden"></div>
   <script>
 
   var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
@@ -78,6 +81,14 @@ body {background-color: #047911; color: black}
   document.getElementById('chooseButton').onclick = showChosenCard;
   document.getElementById('fullDeckButton').onclick = clickFullDeck;
   dealButton.onclick = dealHand;
+
+  cacheCards(); // to cache images
+
+  function cacheCards() {
+    for (var i = 0; i < deck.length; i++){
+      imageCreate(deck[i], 'fullDeckBoard');
+    }
+  }
 
   function showChosenCard() {
     var chosenCard = document.getElementById('cardInput').value;
@@ -122,10 +133,13 @@ body {background-color: #047911; color: black}
   }
 
   function clickFullDeck() {
-    for (var i = 0; i < deck.length; i++){
-      imageCreate(deck[i], 'fullDeckBoard');
+    if (fullDeckBoard.style.visibility == 'visible'){
+      document.getElementById('fullDeckButton').textContent = 'Show Full Deck!';
+      fullDeckBoard.style.visibility = 'hidden';
+    } else {
+      document.getElementById('fullDeckButton').textContent = 'Hide Full Deck :(';
+      fullDeckBoard.style.visibility = 'visible';
     }
-    document.getElementById('fullDeckButton').disabled = true;
   }
 
   function cardFileName(cardName) {
