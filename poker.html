@@ -76,10 +76,13 @@ button {padding: 4px}
   var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r'];
   var deck = makeDeck();
 
+  var chooseButton = document.getElementById('chooseButton');
+  var fullDeckButton = document.getElementById('fullDeckButton');
   var dealButton = document.getElementById('dealButton');
   var errorMessage = document.getElementById('errorMessage');
-  document.getElementById('chooseButton').onclick = showChosenCard;
-  document.getElementById('fullDeckButton').onclick = clickFullDeck;
+
+  chooseButton.onclick = showChosenCard;
+  fullDeckButton.onclick = clickFullDeck;
   dealButton.onclick = dealHand;
 
   cacheCards(); // to cache images
@@ -134,10 +137,10 @@ button {padding: 4px}
 
   function clickFullDeck() {
     if (fullDeckBoard.style.visibility == 'visible'){
-      document.getElementById('fullDeckButton').textContent = 'Show Full Deck!';
+      fullDeckButton.textContent = 'Show Full Deck!';
       fullDeckBoard.style.visibility = 'hidden';
     } else {
-      document.getElementById('fullDeckButton').textContent = 'Hide Full Deck :(';
+      fullDeckButton.textContent = 'Hide Full Deck :(';
       fullDeckBoard.style.visibility = 'visible';
     }
   }
