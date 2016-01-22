@@ -2,223 +2,193 @@
 <body>
 
 <style>
-body {background-color: #065827; color: black}
-#board {text-align: center}
+
+body {
+  background-color: #065827;
+  color: black;
+  font-family: sans-serif;
+}
 
 button {padding: 4px}
-#fullDeckButton {width: 110px}
-#dealButton {width: 100px}
-.emptyCell {width: 25px}
-.emptyImage {width: 75px}
-.emptyRow {height: 30px}
+#dealButton {
+  width: 200px;
+  height: 30px;
+  margin-top: 50px;
+  border-radius: 10px;
+  font-size: 15px;
+  background-color: white;
+  cursor: pointer;
+}
+
 .slot {
   background-color: #083A13;
   width: 75px;
   height: 110px;
-  margin: 0;
-  padding: 0;
+  display: inline-block;
 }
-#fullDeckBoard img {width: 50px; margin: 5px}
+
+.slotGroup {
+  display: inline-block;
+  margin-right: 50px;
+}
+
 </style>
 
-<p>
-  Pick a card (e.g. 6H for the 6 of Hearts), show/hide full deck, or play Texas hold'em by yourself..for hours.
-  <br><br>
-  <input id="cardInput"></input>
-  <button id="chooseButton">Display!</button>
-  <button id="fullDeckButton">Show Full Deck!</button>
-  <button id="dealButton">Texas hold'em</button>
-</p>
-<p id="errorMessage" style="visibility:hidden; color:red">
-  Pick a real card
-</p>
-<table id="board">
-  <tr>
-    <td>Selected:</td>
-    <td class="emptyCell"></td>
-    <td>Card 1:</td>
-    <td>Card 2:</td>
-  </tr>
-  <tr>
-    <td class="slot" id="selectedSlot"></td>
-    <td class="emptyCell"></td>
-    <td class="slot" id="h1"></td>
-    <td class="slot" id="h2"></td>
-  </tr>
-  <tr>
-    <td class="emptyRow"></td>
-    <td class="emptyRow"></td>
-    <td>Flop:</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td>Turn:</td>
-    <td class="emptyRow"></td>
-    <td>River:</td>
-  </tr>
-  <tr>
-    <td class="emptyImage"></td>
-    <td class="emptyCell">Boardcards:</td>
-    <td class="slot" id="f1"></td>
-    <td class="slot" id="f2"></td>
-    <td class="slot" id="f3"></td>
-    <td class="emptyCell"></td>
-    <td class="slot" id="t"></td>
-    <td class="emptyCell"></td>
-    <td class="slot" id="r"></td>
-  </table>
-  <br>
-  <div id="fullDeckBoard" style="visibility:hidden"></div>
+<div class="slotGroup">
+  <p>Flop</p>
+  <div class="slot" id="f1"></div>
+  <div class="slot" id="f2"></div>
+  <div class="slot" id="f3"></div>
+</div>
 
-  <script>
+<div class="slotGroup">
+  <p>Turn</p>
+  <div class="slot" id="t"></div>
+</div>
 
-  var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
-  var h1, h2, f1, f2, f3, t, r; // card slots
-  var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r'];
-  var gameDeck = makeShuffledDeck();
+<div class="slotGroup">
+  <p>River</p>
+  <div class="slot" id="r"></div>
+</div>
 
-  var chooseButton = document.getElementById('chooseButton');
-  var fullDeckButton = document.getElementById('fullDeckButton');
-  var dealButton = document.getElementById('dealButton');
-  var errorMessage = document.getElementById('errorMessage');
+<br>
 
-  chooseButton.onclick = showChosenCard;
-  fullDeckButton.onclick = clickFullDeck;
+<div class="slotGroup">
+  <p>Hand</p>
+  <div class="slot" id="h1"></div>
+  <div class="slot" id="h2"></div>
+</div>
+
+<br>
+
+<button id="dealButton">Texas hold 'em</button>
+
+<div id="cacheCards" style="display: none"></div>
+
+<script>
+var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
+var h1, h2, f1, f2, f3, t, r; // card slots
+var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r'];
+var gameDeck = makeShuffledDeck();
+
+var chooseButton = document.getElementById('chooseButton');
+var dealButton = document.getElementById('dealButton');
+var errorMessage = document.getElementById('errorMessage');
+
+dealButton.onclick = dealHand;
+
+cacheCards(); // to cache images
+
+function cacheCards() {
+  var deck = makeSortedDeck();
+  for (var i = 0; i < deck.length; i++){
+    imageCreate(deck[i], 'cacheCards');
+  }
+}
+
+function imageCreate(card, slotId) {
+  var image = document.createElement('img');
+  image.src = cardFileName(card);
+  document.getElementById(slotId).appendChild(image);
+}
+
+// display a given card in a given place
+function showCard(cardName, slotId) {
+  clearCard(slotId);
+  imageCreate(cardName, slotId);
+}
+
+// clears the card with the given id
+function clearCard(slotId) {
+  document.getElementById(slotId).innerHTML = '';
+}
+
+function cardFileName(cardName) {
+  return 'cards/small/'+cardName.toUpperCase()+'.png';
+}
+
+function makeSortedDeck() {
+  var result = [];
+  for (var j=0; j<4; j++) {
+    var suit = 'CDHS'[j];
+    for (var i=2; i<11; i++){
+      result.push(i+suit);
+    }
+    for (var k=0; k<4; k++) {
+      result.push('JQKA'[k] + suit);
+    }
+  }
+  return result;
+}
+
+// creates a complete shuffled deck
+function makeShuffledDeck() {
+  var sorted = makeSortedDeck();
+  var shuffled = [];
+  var len = sorted.length;
+  for (i = 0; i < len; i++) {
+    shuffled[i] = pullRandomCard(sorted);
+  }
+  return shuffled;
+}
+
+// returns a random card and removes it from the given deck
+function pullRandomCard(deck) {
+  var i = randomInt(deck.length);
+  var card = deck[i];
+  deck.splice(i, 1);
+  return card;
+}
+
+// returns a random num [0 , limit)
+function randomInt(limit){
+  return Math.floor(limit * Math.random());
+}
+
+function dealHand() {
+  h1 = gameDeck.shift();
+  h2 = gameDeck.shift();
+  showCard(h1, 'h1');
+  showCard(h2, 'h2');
+  dealButton.textContent = "Flop";
+  dealButton.onclick = dealFlop;
+}
+
+function dealFlop() {
+  f1 = gameDeck.shift();
+  f2 = gameDeck.shift();
+  f3 = gameDeck.shift();
+  showCard(f1, 'f1');
+  showCard(f2, 'f2');
+  showCard(f3, 'f3');
+  dealButton.textContent = "Turn";
+  dealButton.onclick = dealTurn;
+}
+
+function dealTurn() {
+  t = gameDeck.shift();
+  showCard(t, 't');
+  dealButton.textContent = "River";
+  dealButton.onclick = dealRiver;
+}
+
+function dealRiver() {
+  r = gameDeck.shift();
+  showCard(r, 'r');
+  dealButton.textContent = "Clear";
+  dealButton.onclick = clearBoard;
+}
+
+// clears all dealt cards
+function clearBoard() {
+  gameDeck = makeShuffledDeck();
+  for (var i=0; i<cardIds.length; i++){
+    clearCard(cardIds[i]);
+  }
+  dealButton.textContent = "Redeal";
   dealButton.onclick = dealHand;
+}
 
-  cacheCards(); // to cache images
-
-  function cacheCards() {
-    var deck = makeSortedDeck();
-    for (var i = 0; i < deck.length; i++){
-      imageCreate(deck[i], 'fullDeckBoard');
-    }
-  }
-
-  function showChosenCard() {
-    var chosenCard = document.getElementById('cardInput').value;
-    if (!(cardNamePattern.test(chosenCard))) {
-      errorMessage.style.visibility = 'visible';
-      clearCard('selectedSlot');
-      return;
-    }
-    errorMessage.style.visibility = 'hidden';
-    showCard(chosenCard, 'selectedSlot');
-  }
-
-  function imageCreate(card, slotId) {
-    var image = document.createElement('img');
-    image.src = cardFileName(card);
-    document.getElementById(slotId).appendChild(image);
-  }
-
-  // display a given card in a given place
-  function showCard(cardName, slotId) {
-    clearCard(slotId);
-    imageCreate(cardName, slotId);
-  }
-
-  // clears the card with the given id
-  function clearCard(slotId) {
-    document.getElementById(slotId).innerHTML = '';
-  }
-
-  function clickFullDeck() {
-    if (fullDeckBoard.style.visibility == 'visible'){
-      fullDeckButton.textContent = 'Show Full Deck!';
-      fullDeckBoard.style.visibility = 'hidden';
-    } else {
-      fullDeckButton.textContent = 'Hide Full Deck :(';
-      fullDeckBoard.style.visibility = 'visible';
-    }
-  }
-
-  function cardFileName(cardName) {
-    return 'cards/small/'+cardName.toUpperCase()+'.png';
-  }
-
-  function makeSortedDeck() {
-    var result = [];
-    for (var j=0; j<4; j++) {
-      var suit = 'CDHS'[j];
-      for (var i=2; i<11; i++){
-        result.push(i+suit);
-      }
-      for (var k=0; k<4; k++) {
-        result.push('JQKA'[k] + suit);
-      }
-    }
-    return result;
-  }
-
-  // creates a complete shuffled deck
-  function makeShuffledDeck() {
-    var sorted = makeSortedDeck();
-    var shuffled = [];
-    var len = sorted.length;
-    for (i = 0; i < len; i++) {
-      shuffled[i] = pullRandomCard(sorted);
-    }
-    return shuffled;
-  }
-
-  // returns a random card and removes it from the given deck
-  function pullRandomCard(deck) {
-    var i = randomInt(deck.length);
-    var card = deck[i];
-    deck.splice(i, 1);
-    return card;
-  }
-
-  // returns a random num [0 , limit)
-  function randomInt(limit){
-    return Math.floor(limit * Math.random());
-  }
-
-  function dealHand() {
-    h1 = gameDeck.shift();
-    h2 = gameDeck.shift();
-    showCard(h1, 'h1');
-    showCard(h2, 'h2');
-    dealButton.textContent = "Flop";
-    dealButton.onclick = dealFlop;
-  }
-
-  function dealFlop() {
-    f1 = gameDeck.shift();
-    f2 = gameDeck.shift();
-    f3 = gameDeck.shift();
-    showCard(f1, 'f1');
-    showCard(f2, 'f2');
-    showCard(f3, 'f3');
-    dealButton.textContent = "Turn";
-    dealButton.onclick = dealTurn;
-  }
-
-  function dealTurn() {
-    t = gameDeck.shift();
-    showCard(t, 't');
-    dealButton.textContent = "River";
-    dealButton.onclick = dealRiver;
-  }
-
-  function dealRiver() {
-    r = gameDeck.shift();
-    showCard(r, 'r');
-    dealButton.textContent = "Clear";
-    dealButton.onclick = clearBoard;
-  }
-
-  // clears all dealt cards
-  function clearBoard() {
-    gameDeck = makeShuffledDeck();
-    for (var i=0; i<cardIds.length; i++){
-      clearCard(cardIds[i]);
-    }
-    dealButton.textContent = "Redeal";
-    dealButton.onclick = dealHand;
-  }
-
-  </script>
+</script>
 </body>
 </html>
