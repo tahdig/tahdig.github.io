@@ -2,7 +2,7 @@
 <body>
 
 <style>
-body {background-color: #047911; color: black}
+body {background-color: #065827; color: black}
 #board {text-align: center}
 
 button {padding: 4px}
@@ -12,7 +12,7 @@ button {padding: 4px}
 .emptyImage {width: 75px}
 .emptyRow {height: 30px}
 .slot {
-  background-color: #065827;
+  background-color: #083A13;
   width: 75px;
   height: 110px;
   margin: 0;
@@ -69,12 +69,13 @@ button {padding: 4px}
   </table>
   <br>
   <div id="fullDeckBoard" style="visibility:hidden"></div>
+
   <script>
 
   var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
   var h1, h2, f1, f2, f3, t, r; // card slots
   var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r'];
-  var deck = makeDeck();
+  var gameDeck = makeShuffledDeck();
 
   var chooseButton = document.getElementById('chooseButton');
   var fullDeckButton = document.getElementById('fullDeckButton');
@@ -88,6 +89,7 @@ button {padding: 4px}
   cacheCards(); // to cache images
 
   function cacheCards() {
+    var deck = makeSortedDeck();
     for (var i = 0; i < deck.length; i++){
       imageCreate(deck[i], 'fullDeckBoard');
     }
@@ -121,20 +123,6 @@ button {padding: 4px}
     document.getElementById(slotId).innerHTML = '';
   }
 
-  function makeDeck() {
-    var result = [];
-    for (var j=0; j<4; j++) {
-      var suit = 'CDHS'[j];
-      for (var i=2; i<11; i++){
-        result.push(i+suit);
-      }
-      for (var k=0; k<4; k++) {
-        result.push('JQKA'[k] + suit);
-      }
-    }
-    return result;
-  }
-
   function clickFullDeck() {
     if (fullDeckBoard.style.visibility == 'visible'){
       fullDeckButton.textContent = 'Show Full Deck!';
@@ -149,9 +137,37 @@ button {padding: 4px}
     return 'cards/small/'+cardName.toUpperCase()+'.png';
   }
 
-  // returns a random item in array cards
-  function randomizer() {
-    return deck[randomInt(deck.length)];
+  function makeSortedDeck() {
+    var result = [];
+    for (var j=0; j<4; j++) {
+      var suit = 'CDHS'[j];
+      for (var i=2; i<11; i++){
+        result.push(i+suit);
+      }
+      for (var k=0; k<4; k++) {
+        result.push('JQKA'[k] + suit);
+      }
+    }
+    return result;
+  }
+
+  // creates a complete shuffled deck
+  function makeShuffledDeck() {
+    var sorted = makeSortedDeck();
+    var shuffled = [];
+    var len = sorted.length;
+    for (i = 0; i < len; i++) {
+      shuffled[i] = pullRandomCard(sorted);
+    }
+    return shuffled;
+  }
+
+  // returns a random card and removes it from the given deck
+  function pullRandomCard(deck) {
+    var i = randomInt(deck.length);
+    var card = deck[i];
+    deck.splice(i, 1);
+    return card;
   }
 
   // returns a random num [0 , limit)
@@ -160,11 +176,8 @@ button {padding: 4px}
   }
 
   function dealHand() {
-    h1 = randomizer();
-    h2 = randomizer();
-    if (h1 == h2) {
-      return dealHand();
-    }
+    h1 = gameDeck.shift();
+    h2 = gameDeck.shift();
     showCard(h1, 'h1');
     showCard(h2, 'h2');
     dealButton.textContent = "Flop";
@@ -172,12 +185,9 @@ button {padding: 4px}
   }
 
   function dealFlop() {
-    f1 = randomizer(f1);
-    f2 = randomizer(f2);
-    f3 = randomizer(f3);
-    if (f1==h1||f1==h2||f2==h1||f2==h2||f2==f1||f3==h1||f3==h2||f3==f1||f3==f2) {
-      return dealFlop();
-    }
+    f1 = gameDeck.shift();
+    f2 = gameDeck.shift();
+    f3 = gameDeck.shift();
     showCard(f1, 'f1');
     showCard(f2, 'f2');
     showCard(f3, 'f3');
@@ -186,20 +196,14 @@ button {padding: 4px}
   }
 
   function dealTurn() {
-    t = randomizer(t);
-    if (t==h1||t==h2||t==f1||t==f2||t==f3){
-      return dealTurn();
-    }
+    t = gameDeck.shift();
     showCard(t, 't');
     dealButton.textContent = "River";
     dealButton.onclick = dealRiver;
   }
 
   function dealRiver() {
-    r = randomizer(r);
-    if (r==h1||r==h2||r==f1||r==f2||r==f3||r==t){
-      return dealRiver();
-    }
+    r = gameDeck.shift();
     showCard(r, 'r');
     dealButton.textContent = "Clear";
     dealButton.onclick = clearBoard;
@@ -207,6 +211,7 @@ button {padding: 4px}
 
   // clears all dealt cards
   function clearBoard() {
+    gameDeck = makeShuffledDeck();
     for (var i=0; i<cardIds.length; i++){
       clearCard(cardIds[i]);
     }
