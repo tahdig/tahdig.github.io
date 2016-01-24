@@ -9,8 +9,7 @@ body {
   font-family: sans-serif;
 }
 
-button {padding: 4px}
-#dealButton {
+button {
   width: 200px;
   height: 30px;
   margin-top: 50px;
@@ -18,6 +17,7 @@ button {padding: 4px}
   font-size: 15px;
   background-color: white;
   cursor: pointer;
+  margin-right: 50px
 }
 
 .slot {
@@ -51,6 +51,13 @@ button {padding: 4px}
   <div class="slot" id="r"></div>
 </div>
 
+<div class="slotGroup">
+  <p>Burnt cards</p>
+  <div class="slot" id="b1"></div>
+  <div class="slot" id="b2"></div>
+  <div class="slot" id="b3"></div>
+</div>
+
 <br>
 
 <div class="slotGroup">
@@ -62,24 +69,27 @@ button {padding: 4px}
 <br>
 
 <button id="dealButton">Texas hold 'em</button>
+<button id="burntButton">Reveal Burnt Card</button>
 
 <div id="cacheCards" style="display: none"></div>
 
 <script>
 var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
-var h1, h2, f1, f2, f3, t, r; // card slots
-var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r'];
+var h1, h2, f1, f2, f3, t, r, b1, b2, b3; // card slots
+var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r', 'b1', 'b2', 'b3'];
 var gameDeck = makeShuffledDeck();
 
-var chooseButton = document.getElementById('chooseButton');
 var dealButton = document.getElementById('dealButton');
-var errorMessage = document.getElementById('errorMessage');
+var burntButton = document.getElementById('burntButton');
 
 dealButton.onclick = dealHand;
+burntButton.onclick = flipBurnt;
+
 
 cacheCards(); // to cache images
 
 function cacheCards() {
+  imageCreate('launch', 'cacheCards');
   var deck = makeSortedDeck();
   for (var i = 0; i < deck.length; i++){
     imageCreate(deck[i], 'cacheCards');
@@ -145,6 +155,22 @@ function randomInt(limit){
   return Math.floor(limit * Math.random());
 }
 
+// empties the burnt card slot and shows launch image
+function burnCard(slotId) {
+  clearCard(slotId);
+  imageCreate('launch', slotId);
+}
+
+// reveals burnt card
+function flipBurnt() {
+  var burnt = [b1, b2, b3, 'b1', 'b2', 'b3'];
+  for (var i = 0; i < 3; i++){
+    if (burnt[i]) {
+      showCard(burnt[i], burnt[i+3]);
+    }
+  }
+}
+
 function dealHand() {
   h1 = gameDeck.shift();
   h2 = gameDeck.shift();
@@ -155,6 +181,8 @@ function dealHand() {
 }
 
 function dealFlop() {
+  b1 = gameDeck.shift();
+  burnCard('b1');
   f1 = gameDeck.shift();
   f2 = gameDeck.shift();
   f3 = gameDeck.shift();
@@ -166,6 +194,8 @@ function dealFlop() {
 }
 
 function dealTurn() {
+  b2 = gameDeck.shift();
+  burnCard('b2');
   t = gameDeck.shift();
   showCard(t, 't');
   dealButton.textContent = "River";
@@ -173,6 +203,8 @@ function dealTurn() {
 }
 
 function dealRiver() {
+  b3 = gameDeck.shift();
+  burnCard('b3');
   r = gameDeck.shift();
   showCard(r, 'r');
   dealButton.textContent = "Clear";
