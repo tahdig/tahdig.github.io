@@ -89,7 +89,7 @@ burntButton.onclick = flipBurnt;
 cacheCards(); // to cache images
 
 function cacheCards() {
-  imageCreate('launch', 'cacheCards');
+  imageCreate('LAUNCH', 'cacheCards');
   var deck = makeSortedDeck();
   for (var i = 0; i < deck.length; i++){
     imageCreate(deck[i], 'cacheCards');
@@ -155,10 +155,10 @@ function randomInt(limit){
   return Math.floor(limit * Math.random());
 }
 
-// empties the burnt card slot and shows launch image
+// empties the burnt card slot and shows  image
 function burnCard(slotId) {
   clearCard(slotId);
-  imageCreate('launch', slotId);
+  imageCreate('LAUNCH', slotId);
 }
 
 // reveals burnt card
