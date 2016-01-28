@@ -148,7 +148,9 @@ function showCard(cardName, slotId) {
 
 // clears the card with the given id
 function clearCard(slotId) {
-  document.getElementById(slotId).innerHTML = '';
+  var slot = document.getElementById(slotId)
+  slot.innerHTML = '';
+  slot.className = 'slot';
 }
 
 function cardFileName(cardName) {
