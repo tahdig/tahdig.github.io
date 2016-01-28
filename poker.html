@@ -27,6 +27,10 @@ button {
   display: inline-block;
 }
 
+.down:hover {
+  cursor: pointer;
+}
+
 .slotGroup {
   display: inline-block;
   margin-right: 50px;
@@ -203,7 +207,14 @@ function revealCards() {
 // deals a card facing down
 function dealCardDown(id) {
   slots[id] = gameDeck.shift();
-  imageCreate('launch', id);
+  showCard('launch', id);
+  function reveal() {
+    clearCard(id);
+    imageCreate(slots[id], id);
+  }
+  var slot = document.getElementById(id);
+  slot.onclick = reveal;
+  slot.className = 'slot down';
 }
 
 function dealCardUp(id) {
