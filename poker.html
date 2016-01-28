@@ -32,6 +32,18 @@ button {
   margin-right: 50px;
 }
 
+.playerSlot {
+  background-color: #083A13;
+  width:75px;
+  height: 110px;
+  display: inline-block;
+}
+
+#addNumPlayers {
+  margin-left: 10px;
+  width:30px;
+}
+
 </style>
 
 <div class="slotGroup">
@@ -60,36 +72,42 @@ button {
 
 <br>
 
-<div class="slotGroup">
-  <p>Hand</p>
-  <div class="slot" id="h1"></div>
-  <div class="slot" id="h2"></div>
+<div class="slotGroup" id="p1">
+  <p>Player <span class="playerNum">1</span></p>
+  <div class="playerSlot" id="p1a"></div>
+  <div class="playerSlot" id="p1b"></div>
 </div>
+
+<div class="slotGroup" id="players"></div>
 
 <br>
 
 <button id="dealButton">Texas hold 'em</button>
-<button id="burntButton">Reveal Burnt Card</button>
+<button id="revealButton">Reveal Cards</button>
+<button id="addPlayerButton">Add Player</button>
 
 <div id="cacheCards" style="display: none"></div>
 
 <script>
 var cardNamePattern = /^([23456789ajqkAJQK]|10)[sdchSDCH]$/; // regex
-var h1, h2, f1, f2, f3, t, r, b1, b2, b3; // card slots
-var cardIds = ['h1', 'h2', 'f1', 'f2', 'f3', 't', 'r', 'b1', 'b2', 'b3'];
-var gameDeck = makeShuffledDeck();
+var gameDeck;
+var numPlayers = 1;
+var slots = {};
+
 
 var dealButton = document.getElementById('dealButton');
-var burntButton = document.getElementById('burntButton');
+var revealButton = document.getElementById('revealButton');
+var addPlayerButton = document.getElementById('addPlayerButton');
 
 dealButton.onclick = dealHand;
-burntButton.onclick = flipBurnt;
-
+revealButton.onclick = revealCards;
+addPlayerButton.onclick = addPlayer;
 
 cacheCards(); // to cache images
 
+
 function cacheCards() {
-  imageCreate('launch', 'cacheCards');
+  imageCreate('LAUNCH', 'cacheCards');
   var deck = makeSortedDeck();
   for (var i = 0; i < deck.length; i++){
     imageCreate(deck[i], 'cacheCards');
@@ -100,6 +118,22 @@ function imageCreate(card, slotId) {
   var image = document.createElement('img');
   image.src = cardFileName(card);
   document.getElementById(slotId).appendChild(image);
+}
+
+function addPlayer() {
+  var newPlayer = document.getElementById('p1').cloneNode(true);
+  document.getElementById('players').appendChild(newPlayer);
+  numPlayers = numPlayers+1;
+  newPlayer.id = 'p'+numPlayers;
+  var slots = newPlayer.getElementsByClassName('playerSlot');
+  slots[0].id = newPlayer.id+'a';
+  slots[1].id = newPlayer.id+'b';
+  var playerNum = newPlayer.getElementsByClassName('playerNum');
+  playerNum[0].textContent = numPlayers;
+  if (numPlayers == 9) {
+    addPlayerButton.textContent = 'Maximum #';
+    addPlayerButton.disabled = true;
+  }
 }
 
 // display a given card in a given place
@@ -151,77 +185,81 @@ function pullRandomCard(deck) {
 }
 
 // returns a random num [0 , limit)
-function randomInt(limit){
+function randomInt(limit) {
   return Math.floor(limit * Math.random());
 }
 
-// empties the burnt card slot and shows  image
-function burnCard(slotId) {
-  clearCard(slotId);
-  imageCreate('launch', slotId);
-}
-
-// reveals burnt card
-function flipBurnt() {
-  var burnt = [b1, b2, b3, 'b1', 'b2', 'b3'];
-  for (var i = 0; i < 3; i++){
-    if (burnt[i]) {
-      showCard(burnt[i], burnt[i+3]);
-    }
+// reveals all face down cards
+function revealCards() {
+  var ids = Object.keys(slots);
+  for (var i = 0; i < ids.length; i++) {
+    // note: we're revealing the cards that are already revelead
+    // flip only ones that are down - use if condition (source: launch.png)
+    var id = ids[i];
+    showCard(slots[id], id);
   }
 }
 
+// deals a card facing down
+function dealCardDown(id) {
+  slots[id] = gameDeck.shift();
+  imageCreate('launch', id);
+}
+
+function dealCardUp(id) {
+  slots[id] = gameDeck.shift();
+  showCard(slots[id], id);
+}
+
 function dealHand() {
-  h1 = gameDeck.shift();
-  h2 = gameDeck.shift();
-  showCard(h1, 'h1');
-  showCard(h2, 'h2');
+  gameDeck = makeShuffledDeck();
+  addPlayerButton.disabled = 'true';
+  dealCardUp('p1a');
+  for (var i = 2; i <= numPlayers; i++) {
+    dealCardDown('p'+i+'a');
+  }
+  dealCardUp('p1b');
+  for (var i = 2; i <= numPlayers; i++) {
+    dealCardDown('p'+i+'b');
+  }
   dealButton.textContent = "Flop";
   dealButton.onclick = dealFlop;
 }
 
 function dealFlop() {
-  b1 = gameDeck.shift();
-  burnCard('b1');
-  f1 = gameDeck.shift();
-  f2 = gameDeck.shift();
-  f3 = gameDeck.shift();
-  showCard(f1, 'f1');
-  showCard(f2, 'f2');
-  showCard(f3, 'f3');
+  dealCardDown('b1');
+  dealCardUp('f1');
+  dealCardUp('f2');
+  dealCardUp('f3');
   dealButton.textContent = "Turn";
   dealButton.onclick = dealTurn;
 }
 
 function dealTurn() {
-  b2 = gameDeck.shift();
-  burnCard('b2');
-  t = gameDeck.shift();
-  showCard(t, 't');
+  dealCardDown('b2');
+  dealCardUp('t');
   dealButton.textContent = "River";
   dealButton.onclick = dealRiver;
 }
 
 function dealRiver() {
-  b3 = gameDeck.shift();
-  burnCard('b3');
-  r = gameDeck.shift();
-  showCard(r, 'r');
+  dealCardDown('b3');
+  dealCardUp('r');
   dealButton.textContent = "Clear";
   dealButton.onclick = clearBoard;
 }
 
 // clears all dealt cards
 function clearBoard() {
-  gameDeck = makeShuffledDeck();
-  b1 = b2 = b3 = '';
-  for (var i=0; i<cardIds.length; i++){
-    clearCard(cardIds[i]);
+  var ids = Object.keys(slots);
+  for (var i=0; i<ids.length; i++){
+    clearCard(ids[i]);
   }
+  slots = {};
+  addPlayerButton.disabled = false;
   dealButton.textContent = "Redeal";
   dealButton.onclick = dealHand;
 }
-
 
 </script>
 </body>
