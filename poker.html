@@ -129,9 +129,9 @@ function addPlayer() {
   document.getElementById('players').appendChild(newPlayer);
   numPlayers = numPlayers+1;
   newPlayer.id = 'p'+numPlayers;
-  var slots = newPlayer.getElementsByClassName('playerSlot');
-  slots[0].id = newPlayer.id+'a';
-  slots[1].id = newPlayer.id+'b';
+  var slotElements = newPlayer.getElementsByClassName('playerSlot');
+  slotElements[0].id = newPlayer.id+'a';
+  slotElements[1].id = newPlayer.id+'b';
   var playerNum = newPlayer.getElementsByClassName('playerNum');
   playerNum[0].textContent = numPlayers;
   if (numPlayers == 9) {
@@ -150,7 +150,6 @@ function showCard(cardName, slotId) {
 function clearCard(slotId) {
   var slot = document.getElementById(slotId)
   slot.innerHTML = '';
-  slot.className = 'slot';
 }
 
 function cardFileName(cardName) {
